@@ -94,7 +94,7 @@ public class NPCMakerWindow : EditorWindow
 
 		if (GUILayout.Button("Generate"))
 		{
-			SettingsWindow.OpenWindow();
+			SettingsWindow2.OpenWindow();
 		}
 
 		GUILayout.EndVertical();
