@@ -12,53 +12,61 @@ public class SettingsWindow2 : EditorWindow {
 		window.Show();
 	}
 
-	private void OnGUI()
+    private void OnGUI()
 	{
-		DrawSettings((CharacterData)NPCMakerWindow.npcInfo);
-	}
-
-	public void DrawSettings(CharacterData charData)
+        DrawSettings((NPCData)NPCMakerWindow.npcInfo);
+    }
+    
+	public void DrawSettings(NPCData charData)
 	{
-		EditorGUILayout.BeginHorizontal();
-		GUILayout.Label(new GUIContent("Name", "Enter the Name of the character"));
+        EditorGUILayout.BeginHorizontal();
+		GUILayout.Label(new GUIContent("Prefab", "Enter the prefan for the character"));
 		charData.prefab = (GameObject)EditorGUILayout.ObjectField(charData.prefab, typeof(GameObject), false);
 		EditorGUILayout.EndHorizontal();
 
 		EditorGUILayout.BeginHorizontal();
-		GUILayout.Label(new GUIContent("Max Health", "Enter a value for the Max Health for the character"));
-		charData.maxHealth = EditorGUILayout.FloatField(charData.maxHealth);
-		EditorGUILayout.EndHorizontal();
-
-		EditorGUILayout.BeginHorizontal();
-		GUILayout.Label(new GUIContent("Max Energy", "Enter a value for the Max Energy for the character"));
-		charData.maxEnergy = EditorGUILayout.FloatField(charData.maxEnergy);
-		EditorGUILayout.EndHorizontal();
-
-		EditorGUILayout.BeginHorizontal();
-		GUILayout.Label(new GUIContent("% Crit Chance", "Select the % of crit chance"));
-		charData.critChance = EditorGUILayout.Slider(charData.critChance, 0, 100);
-		EditorGUILayout.EndHorizontal();
-
-		EditorGUILayout.BeginHorizontal();
 		GUILayout.Label(new GUIContent("Name", "Enter the Name of the character"));
-		charData.name = EditorGUILayout.TextField(charData.name);
+		charData.characterName = EditorGUILayout.TextField(charData.characterName);
 		EditorGUILayout.EndHorizontal();
 
-		if(charData.name == null || charData.name.Length < 1)
+        List<string> propertyNames = new List<string>();
+        foreach (var item in charData.npcClassType.intVariables) 
+            propertyNames.Add(item.Key);
+        
+        for(int i= 0; i < propertyNames.Count; i++) {
+            EditorGUILayout.BeginHorizontal();
+            charData.npcClassType.intVariables[propertyNames[i]] = EditorGUILayout.IntField(propertyNames[i] + ":", charData.npcClassType.intVariables[propertyNames[i]]);
+            EditorGUILayout.EndVertical();
+        }
+
+        propertyNames.Clear();
+
+        foreach (var item in charData.npcClassType.floatVariables)
+            propertyNames.Add(item.Key);
+
+        for (int i = 0; i < propertyNames.Count; i++) {
+            EditorGUILayout.BeginHorizontal();
+            charData.npcClassType.floatVariables[propertyNames[i]] = EditorGUILayout.FloatField(propertyNames[i] + ":", charData.npcClassType.floatVariables[propertyNames[i]]);
+            EditorGUILayout.EndVertical();
+        }
+
+        if(charData.characterName == null || charData.characterName.Length < 1)
 		{
-			EditorGUILayout.HelpBox("Name & Prefab field cannot be empty", MessageType.Warning);
-		}else if (GUILayout.Button("Save and Exit"))
+			EditorGUILayout.HelpBox("Name cannot be empty", MessageType.Warning);
+		}else if(charData.prefab == null) {
+            EditorGUILayout.HelpBox("Prefab cannot be empty", MessageType.Warning);
+        }else if (GUILayout.Button("Save and Exit"))
 		{
 			SaveData();
 			this.Close();
 		}
-	}
-
-	void SaveData()
+    }
+    
+    void SaveData()
 	{
 		string	prefabPath;
-		var newprefabPath = "Assets/Prefabs/Character/NPC/" + NPCMakerWindow.npcInfo.name + ".prefab";
-		var dataPath = "Assets/Resources/CharacterData/Data/" + NPCMakerWindow.npcInfo.name + ".asset";
+		var newprefabPath = "Assets/Prefabs/Character/NPC/" + NPCMakerWindow.npcInfo.characterName + ".prefab";
+		var dataPath = "Assets/Resources/CharacterData/Data/" + NPCMakerWindow.npcInfo.characterName + ".asset";
 
 		AssetDatabase.CreateAsset(NPCMakerWindow.npcInfo, dataPath);
 		prefabPath = AssetDatabase.GetAssetPath(NPCMakerWindow.npcInfo.prefab);

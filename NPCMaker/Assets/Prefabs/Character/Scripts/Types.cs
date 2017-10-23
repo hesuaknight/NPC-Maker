@@ -4,7 +4,8 @@ using UnityEngine;
 
 namespace Types
 {
-	public enum NPCDmgType
+    [System.Obsolete("Use DamageType Class")]
+    public enum NPCDmgType
 	{
 		FIRE,
 		ICE,
@@ -14,7 +15,8 @@ namespace Types
 
 	}
 
-	public enum NPCWpnType
+    [System.Obsolete("Use WeaponType Class")]
+    public enum NPCWpnType
 	{
 		STAFF,
 		SWORD_AND_SHIELD,
@@ -33,7 +35,8 @@ namespace Types
 
 	}
 
-	public enum NPCStrategyType
+    [System.Obsolete("Use StrategyType Class")]
+    public enum NPCStrategyType
 	{
 		STEALTH,
 		AGRESSIVE,

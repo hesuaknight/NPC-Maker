@@ -14,6 +14,11 @@ public class NPCMakerWindow : EditorWindow
 
 	Color heatherSectionColor = Color.gray;
 
+    WeaponType _npcWeaponType;
+    DamageType _npcDamageType;
+    StrategyType _npcStrategyType;
+    Dictionary<string, CharacterClass> _allClass;
+
 	static NPCData npcData;
 
 	public static NPCData npcInfo { get { return npcData; } }
@@ -34,14 +39,20 @@ public class NPCMakerWindow : EditorWindow
 		heatherTexture.Apply();
 
 		npcData = (NPCData)ScriptableObject.CreateInstance(typeof(NPCData));
-	}
+
+        _npcWeaponType = (WeaponType)AssetDatabase.LoadAssetAtPath("Assets/Resources/CharacterData/Data/NPCSetup/WeaponType.asset", typeof(WeaponType));
+        _npcDamageType = (DamageType)AssetDatabase.LoadAssetAtPath("Assets/Resources/CharacterData/Data/NPCSetup/DamageType.asset", typeof(DamageType));
+        _npcStrategyType = (StrategyType)AssetDatabase.LoadAssetAtPath("Assets/Resources/CharacterData/Data/NPCSetup/StrategyType.asset", typeof(StrategyType));
+        LoadAllCharacterClass();
+    }
 
 	//ES COMO EL UPDATE SE LLAMA UNA VEZ POR INTERACCION
 	private void OnGUI()
 	{
 		DrawLayouts();
 		DrawHeather();
-		DrawNPCSection();
+        if(ValidateSetup())
+		    DrawNPCSection();
 	}
 
 	private void DrawLayouts()
@@ -68,28 +79,29 @@ public class NPCMakerWindow : EditorWindow
 
 	private void DrawNPCSection()
 	{
+
 		GUILayout.BeginArea(npcSection);
 		GUILayout.BeginVertical();
 		GUILayout.Label(new GUIContent("NPC section"));
 
 		GUILayout.BeginHorizontal();
 		GUILayout.Label(new GUIContent("Class", "Select the class"));
-		npcData.npcClassType = (Types.NPCCLassType)EditorGUILayout.EnumPopup(npcData.npcClassType);
+        npcData.npcClassType = _allClass[GetAllCharacterClassNames()[EditorGUILayout.Popup(GetAllCharacterClassNames().IndexOf(npcData.npcClassType.name), GetAllCharacterClassNames().ToArray())]];
 		GUILayout.EndHorizontal();
 
 		GUILayout.BeginHorizontal();
 		GUILayout.Label(new GUIContent("Weapon", "Select a Wepon"));
-		npcData.npcWpnType = (Types.NPCWpnType)EditorGUILayout.EnumPopup(npcData.npcWpnType);
+        npcData.npcWeaponType = _npcWeaponType.config[EditorGUILayout.Popup(_npcWeaponType.config.IndexOf(npcData.npcWeaponType), _npcWeaponType.config.ToArray())];
 		GUILayout.EndHorizontal();
 
 		GUILayout.BeginHorizontal();
 		GUILayout.Label(new GUIContent("Damage Type", "Select a damage Type"));
-		npcData.npcDmgType = (Types.NPCDmgType)EditorGUILayout.EnumPopup(npcData.npcDmgType);
+        npcData.npcDamageType = _npcDamageType.config[EditorGUILayout.Popup(_npcDamageType.config.IndexOf(npcData.npcDamageType), _npcDamageType.config.ToArray())];
 		GUILayout.EndHorizontal();
 
 		GUILayout.BeginHorizontal();
 		GUILayout.Label(new GUIContent("Strategy Behabour", "Select a behabour"));
-		npcData.npcStrategyType = (Types.NPCStrategyType)EditorGUILayout.EnumPopup(npcData.npcStrategyType);
+        npcData.npcStrategyType = _npcStrategyType.config[EditorGUILayout.Popup(_npcStrategyType.config.IndexOf(npcData.npcStrategyType), _npcStrategyType.config.ToArray())];
 		GUILayout.EndHorizontal();
 
 		if (GUILayout.Button("Generate"))
@@ -99,8 +111,65 @@ public class NPCMakerWindow : EditorWindow
 
 		GUILayout.EndVertical();
 		GUILayout.EndArea();
-
 	}
 
+    /// <summary>
+    /// Validate if all necessary configurations for the creation of npc exists.
+    /// </summary>
+    /// <returns></returns>
+    private bool ValidateSetup() {
+
+        if (_npcWeaponType == null) {
+            GUILayout.BeginArea(npcSection);
+            EditorGUILayout.HelpBox("No setup for weapons", MessageType.Error);
+            if (GUILayout.Button("Create Setup")) {
+                WeaponType.CreateWeaponType();
+                _npcWeaponType = (WeaponType)AssetDatabase.LoadAssetAtPath("Assets/Resources/CharacterData/Data/NPCSetup/WeaponType.asset", typeof(WeaponType));
+            }
+            GUILayout.EndArea();
+            return false;
+        }else if(_npcDamageType == null) {
+            GUILayout.BeginArea(npcSection);
+            EditorGUILayout.HelpBox("No setup for Damage type", MessageType.Error);
+            if (GUILayout.Button("Create Setup")) {
+                DamageType.CreateWeaponType();
+                _npcDamageType = (DamageType)AssetDatabase.LoadAssetAtPath("Assets/Resources/CharacterData/Data/NPCSetup/DamageType.asset", typeof(DamageType));
+            }
+            GUILayout.EndArea();
+            return false;
+        } else if (_npcStrategyType == null) {
+            GUILayout.BeginArea(npcSection);
+            EditorGUILayout.HelpBox("No setup for Strategy type", MessageType.Error);
+            if (GUILayout.Button("Create Setup")) {
+                StrategyType.CreateWeaponType();
+                _npcStrategyType = (StrategyType)AssetDatabase.LoadAssetAtPath("Assets/Resources/CharacterData/Data/NPCSetup/StrategyType.asset", typeof(StrategyType));
+            }
+            GUILayout.EndArea();
+            return false;
+        }
+
+        return true;
+    }
+
+    private void LoadAllCharacterClass() {
+        _allClass = new Dictionary<string, CharacterClass>();
+        string[] allPaths = AssetDatabase.FindAssets("t:CharacterClass");
+        CharacterClass data = null;
+        for (int i = 0; i < allPaths.Length; i++) {
+            allPaths[i] = AssetDatabase.GUIDToAssetPath(allPaths[i]);
+            data = ((CharacterClass)AssetDatabase.LoadAssetAtPath(allPaths[i], typeof(CharacterClass)));
+            _allClass.Add(data.name, data);
+        }
+        npcData.npcClassType = data;
+    }
+
+    private List<string> GetAllCharacterClassNames() {
+        List<string> classNames = new List<string>();
+
+        foreach (var item in _allClass) 
+            classNames.Add(item.Key);
+
+        return classNames;
+    }
 
 }

@@ -4,10 +4,14 @@ using UnityEngine;
 using Types;
 
 [CreateAssetMenu(fileName ="New NPC Data", menuName= "CharacterData / NPC Data") ]
-public class NPCData : CharacterData {
+public class NPCData : ScriptableObject {
+	public CharacterClass npcClassType;
 
-	public NPCDmgType npcDmgType;
-	public NPCWpnType npcWpnType;
-	public NPCCLassType npcClassType;
-	public NPCStrategyType npcStrategyType;
+    public string characterName;
+    public GameObject prefab;
+
+    public string npcWeaponType = "none";
+    public string npcDamageType = "none";
+    public string npcStrategyType = "none";
+
 }
