@@ -11,7 +11,7 @@ public class CharacterClass : ScriptableObject {
     public Dictionary<string, float> floatVariables;
 
     public CharacterClass() {
-        name = "New Character Class";
+        name = typeof(CharacterClass).ToString();
         intVariables = new Dictionary<string, int>();
         floatVariables = new Dictionary<string, float>();
     }
@@ -22,7 +22,6 @@ public class CharacterClass : ScriptableObject {
         AssetDatabase.CreateAsset(asset, "Assets/Resources/CharacterData/Data/Character Class/" + typeof(CharacterClass).ToString() + ".asset");
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-
         Selection.activeObject = asset;
     }
 

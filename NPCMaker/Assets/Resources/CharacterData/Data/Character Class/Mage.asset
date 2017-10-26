@@ -12,8 +12,3 @@ MonoBehaviour:
   m_Name: Mage
   m_EditorClassIdentifier: 
   name: Mage
-  prefab: {fileID: 0}
-  npcClassType: none
-  npcWeaponType: none
-  npcDamageType: none
-  npcStrategyType: none

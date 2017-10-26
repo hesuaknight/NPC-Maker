@@ -7,6 +7,9 @@ using UnityEditor;
 public class CharacterClassCustomEditor : Editor {
     CharacterClass _target;
 
+    bool _displayIntVariables;
+    bool _displayFloatVariables;
+
     int _currentTabSelected;
 
     string _variableName = "variable";
@@ -34,15 +37,37 @@ public class CharacterClassCustomEditor : Editor {
 
         EditorGUILayout.LabelField(_target.name, EditorStyles.boldLabel);
 
-        foreach (var item in _target.intVariables)
-            EditorGUILayout.LabelField(item.Key + ": " + item.Value);
+        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
-        foreach (var item in _target.floatVariables)
-            EditorGUILayout.LabelField(item.Key + ": " + item.Value);
+        EditorGUILayout.LabelField("Variables", EditorStyles.boldLabel);
+        EditorGUI.indentLevel++;
 
+        _displayIntVariables = EditorGUILayout.Foldout(_displayIntVariables, (_displayIntVariables ? "Hide" : "Show") + " int variables");
+
+        if (_displayIntVariables) {
+            if (_target.intVariables.Count <= 0)
+                EditorGUILayout.LabelField("Empty list", EditorStyles.boldLabel);
+            else
+                foreach (var item in _target.intVariables)
+                    EditorGUILayout.LabelField(item.Key);
+        }
+
+        _displayFloatVariables = EditorGUILayout.Foldout(_displayFloatVariables, (_displayFloatVariables ? "Hide" : "Show") + " float variables");
+
+        if (_displayFloatVariables) {
+            if (_target.floatVariables.Count <= 0)
+                EditorGUILayout.LabelField("Empty list", EditorStyles.boldLabel);
+            else
+                foreach (var item in _target.floatVariables)
+                    EditorGUILayout.LabelField(item.Key);
+        }
+        EditorGUILayout.EndVertical();
     }
 
     private void AddVariable() {
+
+        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+
         _variableName = EditorGUILayout.TextField("Name:", _variableName);
         _variableType = EditorGUILayout.Popup("Varialbe Type:", _variableType, new string[] { "int", "float" });
 
@@ -58,9 +83,13 @@ public class CharacterClassCustomEditor : Editor {
                 _variableName = "variable";
             }
         }
+
+        EditorGUILayout.EndVertical();
     }
 
     private void DeleteVariable() {
+        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+
         if (_target.intVariables.Count <= 0 && _target.floatVariables.Count <= 0)
             EditorGUILayout.LabelField("Empty List", EditorStyles.boldLabel);
 
@@ -90,5 +119,7 @@ public class CharacterClassCustomEditor : Editor {
             }
             GUILayout.EndHorizontal();
         }
+
+        EditorGUILayout.EndVertical();
     }
 }

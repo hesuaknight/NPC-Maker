@@ -12,4 +12,3 @@ MonoBehaviour:
   m_Name: Warrior
   m_EditorClassIdentifier: 
   name: Warrior
-  prefab: {fileID: 0}
