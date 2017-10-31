@@ -11,7 +11,10 @@ public class NPCMakerWindow : EditorWindow {
     Rect heatherSection;
     Rect npcSection;
 
-    Color heatherSectionColor = Color.gray;
+    GUISkin _skin;
+
+    Color heatherSectionColor = new Color(0.16f, 0.36f, 0.63f);
+    Color bodySectionColor = new Color(0.49f, 0.67f, 0.68f);
 
     WeaponType _npcWeaponType;
     DamageType _npcDamageType;
@@ -25,7 +28,7 @@ public class NPCMakerWindow : EditorWindow {
     [MenuItem("Custom/NPC Maker")]
     static void OpenWindow() {
         NPCMakerWindow window = (NPCMakerWindow)GetWindow(typeof(NPCMakerWindow));
-        window.minSize = new Vector2(300, 300);
+        window.minSize = window.maxSize =  new Vector2(350, 175);
         window.Show();
     }
 
@@ -34,6 +37,12 @@ public class NPCMakerWindow : EditorWindow {
         heatherTexture = new Texture2D(1, 1);
         heatherTexture.SetPixel(0, 0, heatherSectionColor);
         heatherTexture.Apply();
+
+        npcTexture = new Texture2D(1, 1);
+        npcTexture.SetPixel(0, 0, bodySectionColor);
+        npcTexture.Apply();
+
+        _skin = Resources.Load<GUISkin>("GUIStyles/NPCMakerSkin");
 
         npcData = (NPCData)ScriptableObject.CreateInstance(typeof(NPCData));
 
@@ -63,11 +72,12 @@ public class NPCMakerWindow : EditorWindow {
         npcSection.height = Screen.height;
 
         GUI.DrawTexture(heatherSection, heatherTexture);
+        GUI.DrawTexture(npcSection, npcTexture);
     }
 
     private void DrawHeather() {
         GUILayout.BeginArea(heatherSection);
-        GUILayout.Label(new GUIContent("NPC Maker", "Make your custom NPC"));
+        GUILayout.Label(new GUIContent("NPC Maker", "Make your custom NPC"), _skin.GetStyle("Header"));
         GUILayout.EndArea();
     }
 
@@ -75,27 +85,35 @@ public class NPCMakerWindow : EditorWindow {
 
         GUILayout.BeginArea(npcSection);
         GUILayout.BeginVertical();
-        GUILayout.Label(new GUIContent("NPC section"));
+        EditorGUILayout.Space();
 
         GUILayout.BeginHorizontal();
-        GUILayout.Label(new GUIContent("Class", "Select the class"));
+        GUILayout.Label(new GUIContent("Class", "Select the class"), _skin.GetStyle("Body"), GUILayout.Width(200));
         npcData.npcClassType = _allClass[GetAllCharacterClassNames()[EditorGUILayout.Popup(GetAllCharacterClassNames().IndexOf(npcData.npcClassType.name), GetAllCharacterClassNames().ToArray())]];
         GUILayout.EndHorizontal();
 
+        EditorGUILayout.Space();
+
         GUILayout.BeginHorizontal();
-        GUILayout.Label(new GUIContent("Weapon", "Select a Wepon"));
+        GUILayout.Label(new GUIContent("Weapon", "Select a Wepon"), _skin.GetStyle("Body"), GUILayout.Width(200));
         npcData.npcWeaponType = _npcWeaponType.config[EditorGUILayout.Popup(_npcWeaponType.config.IndexOf(npcData.npcWeaponType), _npcWeaponType.config.ToArray())];
         GUILayout.EndHorizontal();
 
+        EditorGUILayout.Space();
+
         GUILayout.BeginHorizontal();
-        GUILayout.Label(new GUIContent("Damage Type", "Select a damage Type"));
+        GUILayout.Label(new GUIContent("Damage Type", "Select a damage Type"), _skin.GetStyle("Body"), GUILayout.Width(200));
         npcData.npcDamageType = _npcDamageType.config[EditorGUILayout.Popup(_npcDamageType.config.IndexOf(npcData.npcDamageType), _npcDamageType.config.ToArray())];
         GUILayout.EndHorizontal();
 
+        EditorGUILayout.Space();
+
         GUILayout.BeginHorizontal();
-        GUILayout.Label(new GUIContent("Strategy Behabour", "Select a behabour"));
+        GUILayout.Label(new GUIContent("Strategy Behabour", "Select a behabour"), _skin.GetStyle("Body"), GUILayout.Width(200));
         npcData.npcStrategyType = _npcStrategyType.config[EditorGUILayout.Popup(_npcStrategyType.config.IndexOf(npcData.npcStrategyType), _npcStrategyType.config.ToArray())];
         GUILayout.EndHorizontal();
+
+        EditorGUILayout.Space();
 
         if (GUILayout.Button("Generate")) {
             SettingsWindow2.OpenWindow();
