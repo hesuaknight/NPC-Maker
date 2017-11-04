@@ -11,6 +11,11 @@ public class SettingsWindow2 : EditorWindow {
 
     GUISkin _skin;
 
+    // VARIABLES PARA HACER EL ADD COMPONENT
+    public int selected;
+    string[] componentsName = new string[3];
+    List<string> componentsSelected = new List<string>();
+
 	[MenuItem("Custom/Settings")]
 	public static void OpenWindow()
 	{
@@ -40,7 +45,7 @@ public class SettingsWindow2 : EditorWindow {
 
     public  void DrawSettings(NPCData charData)
 	{
-        minSize = maxSize = new Vector2(515, (135 + (26 * (charData.npcClassType.intVariables.Count + charData.npcClassType.floatVariables.Count))));
+        minSize = maxSize = new Vector2(515, (200 + (26 * (charData.npcClassType.intVariables.Count + charData.npcClassType.floatVariables.Count))));
 
         EditorGUILayout.Space();
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
@@ -53,7 +58,7 @@ public class SettingsWindow2 : EditorWindow {
         EditorGUILayout.Space();
 
         EditorGUILayout.BeginHorizontal();
-		GUILayout.Label(new GUIContent("Prefab", "Enter the prefan for the character"), _skin.GetStyle("Body"), GUILayout.Width(200));
+		GUILayout.Label(new GUIContent("Prefab", "Enter the prefab for the character"), _skin.GetStyle("Body"), GUILayout.Width(200));
 		charData.prefab = (GameObject)EditorGUILayout.ObjectField(charData.prefab, typeof(GameObject), false);
 		EditorGUILayout.EndHorizontal();
 
@@ -87,6 +92,20 @@ public class SettingsWindow2 : EditorWindow {
             EditorGUILayout.Space();
         }
 
+        // ASIGNO LOS VALORES PARA EL POPUP Y LOS AGREGO A UNA LISTA CADA VEZ QUE SE APRETA EL BOTON
+        componentsName[0] = "None";
+        componentsName[1] = "Rigidbody";
+        componentsName[2] = "Animator";
+
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("Add Components", _skin.GetStyle("Body"));
+        selected = EditorGUILayout.Popup(selected, componentsName);
+        if (GUILayout.Button("Add Component"))
+            componentsSelected.Add(componentsName[selected]);
+        EditorGUILayout.Space();
+
+
+
         EditorGUILayout.EndVertical();
 
         if (charData.characterName == null || charData.characterName.Length < 1)
@@ -118,6 +137,19 @@ public class SettingsWindow2 : EditorWindow {
 			npcPrefab.AddComponent<NPC>();
 
 		npcPrefab.GetComponent<NPC>().npcData = NPCMakerWindow.npcInfo;
+
+        //NO PUEDO HACER EL ADD COMPONENT
+        foreach (var item in componentsSelected)
+        {
+            //ESTA LINEA TIRA ERROR PORQUE FUE DEPRECADA
+            //npcPrefab.AddComponent(item);
+
+            //ERROR "item is a variable but is used like a type"
+            //npcPrefab.AddComponent<item>;
+
+            //ESTA LINEA TIRA ERROR "AddComponent asking for invalid type" EN LA CONSOLA Y NO AGREGA EL COMPONENTE
+            //npcPrefab.AddComponent(System.Type.GetType(item));
+        }
 
 	}
 
