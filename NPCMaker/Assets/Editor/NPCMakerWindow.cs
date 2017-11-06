@@ -26,7 +26,7 @@ public class NPCMakerWindow : EditorWindow {
     public static NPCData npcInfo { get { return npcData; } }
 
     [MenuItem("Custom/NPC Maker")]
-    static void OpenWindow() {
+    public static void OpenWindow() {
         NPCMakerWindow window = (NPCMakerWindow)GetWindow(typeof(NPCMakerWindow));
         window.minSize = window.maxSize =  new Vector2(350, 175);
         window.Show();
@@ -117,6 +117,7 @@ public class NPCMakerWindow : EditorWindow {
 
         if (GUILayout.Button("Generate")) {
             SettingsWindow2.OpenWindow();
+            this.Close();
         }
 
         GUILayout.EndVertical();
@@ -193,5 +194,9 @@ public class NPCMakerWindow : EditorWindow {
 
         return classNames;
     }
+
+    /*public static void GenerateNPCInstance() {
+        npcData = (NPCData)ScriptableObject.CreateInstance(typeof(NPCData));
+    }*/
 
 }
