@@ -14,6 +14,4 @@ public class WeaponTypeCustomEditor : Editor {
 
         Repaint();
     }
-
- 
 }

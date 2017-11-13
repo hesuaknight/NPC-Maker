@@ -29,6 +29,8 @@ public class CharacterClassCustomEditor : Editor {
         } else if (_currentTabSelected == 2) {
             DeleteVariable();
         }
+
+        Repaint();
     }
 
     private void DrawVariables() {
@@ -65,7 +67,6 @@ public class CharacterClassCustomEditor : Editor {
     }
 
     private void AddVariable() {
-
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
         _variableName = EditorGUILayout.TextField("Name:", _variableName);
@@ -105,18 +106,18 @@ public class CharacterClassCustomEditor : Editor {
         for (int i = 0; i < intVariables.Count; i++) {
             GUILayout.BeginHorizontal();
             EditorGUILayout.LabelField(intVariables[i]);
-            if (GUILayout.Button((Texture)(Resources.Load("Images/ButtonDelete")), GUILayout.ExpandWidth(false))) {
+            if (GUILayout.Button((Texture)(Resources.Load("Images/ButtonDelete")), GUILayout.ExpandWidth(false))) 
                 _target.intVariables.Remove(intVariables[i]);
-            }
+            
             GUILayout.EndHorizontal();
         }
 
         for (int i = 0; i < floatVariables.Count; i++) {
             GUILayout.BeginHorizontal();
             EditorGUILayout.LabelField(floatVariables[i]);
-            if (GUILayout.Button((Texture)(Resources.Load("Images/ButtonDelete")), GUILayout.ExpandWidth(false))) {
+            if (GUILayout.Button((Texture)(Resources.Load("Images/ButtonDelete")), GUILayout.ExpandWidth(false))) 
                 _target.floatVariables.Remove(floatVariables[i]);
-            }
+
             GUILayout.EndHorizontal();
         }
 

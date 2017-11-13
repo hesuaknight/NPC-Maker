@@ -52,6 +52,8 @@ public class SettingsWindow2 : EditorWindow {
         //todo el tiempo el calculo y es tedioso.
         //minSize = maxSize = new Vector2(515, (200 + (26 * (charData.npcClassType.intVariables.Count + charData.npcClassType.floatVariables.Count))));
 
+        Undo.RecordObject(charData, "CharData");
+
         EditorGUILayout.Space();
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
@@ -143,10 +145,6 @@ public class SettingsWindow2 : EditorWindow {
         }
     }
 
-    private void OnDisable() {
-        Debug.Log("Disable");
-    }
-
     void SaveData() {
         string prefabPath;
         var newprefabPath = "Assets/Prefabs/Character/NPC/" + NPCMakerWindow.npcInfo.characterName + ".prefab";
@@ -176,9 +174,16 @@ public class SettingsWindow2 : EditorWindow {
         if (componentsSelected.Count <= 0)
             EditorGUILayout.LabelField("Empty list.", EditorStyles.boldLabel);
 
-        foreach (var item in componentsSelected) 
-            EditorGUILayout.LabelField(item.GetType().ToString().Split('.')[1]);
-        
+        for (int i = 0; i < componentsSelected.Count; i++) {
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField(componentsSelected[i].GetType().ToString().Split('.')[1]);
+            if (GUILayout.Button((Texture)(Resources.Load("Images/ButtonDelete")), GUILayout.ExpandWidth(false))) {
+                availableComponents.Add(componentsSelected[i]);
+                componentsSelected.RemoveAt(i);
+            }
+            EditorGUILayout.EndHorizontal();
+        }
+
         EditorGUI.indentLevel--;
     }
 

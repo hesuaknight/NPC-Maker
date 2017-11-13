@@ -83,6 +83,8 @@ public class NPCMakerWindow : EditorWindow {
 
     private void DrawNPCSection() {
 
+        Undo.RecordObject(npcData, "NPC DATA");
+
         GUILayout.BeginArea(npcSection);
         GUILayout.BeginVertical();
         EditorGUILayout.Space();
@@ -174,6 +176,9 @@ public class NPCMakerWindow : EditorWindow {
         return true;
     }
 
+    /// <summary>
+    /// Load all files type of CharacterClass from Assets folder
+    /// </summary>
     private void LoadAllCharacterClass() {
         _allClass = new Dictionary<string, CharacterClass>();
         string[] allPaths = AssetDatabase.FindAssets("t:CharacterClass");
@@ -186,6 +191,10 @@ public class NPCMakerWindow : EditorWindow {
         npcData.npcClassType = data;
     }
 
+    /// <summary>
+    /// Return all stored class names.
+    /// </summary>
+    /// <returns></returns>
     private List<string> GetAllCharacterClassNames() {
         List<string> classNames = new List<string>();
 
@@ -195,8 +204,5 @@ public class NPCMakerWindow : EditorWindow {
         return classNames;
     }
 
-    /*public static void GenerateNPCInstance() {
-        npcData = (NPCData)ScriptableObject.CreateInstance(typeof(NPCData));
-    }*/
 
 }

@@ -37,12 +37,13 @@ public class SetupCustomEditor : Editor {
     private static void AddType(Setup setup) {
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
-        _newType = EditorGUILayout.TextField("Weapon type:", _newType);
+        _newType = EditorGUILayout.TextField("New type:", _newType);
 
         if (setup.config.Contains(_newType)) {
-            EditorGUILayout.HelpBox("The current weapon type is alredy exists", MessageType.Error);
+            EditorGUILayout.HelpBox("The current type is alredy exists", MessageType.Error);
         } else {
             if (GUILayout.Button("Save")) {
+                Undo.RecordObject(setup, "Add type");
                 setup.config.Add(_newType);
                 _newType = "";
             }
@@ -60,8 +61,10 @@ public class SetupCustomEditor : Editor {
         for (int i = 1; i < setup.config.Count; i++) {
             GUILayout.BeginHorizontal();
             EditorGUILayout.LabelField(setup.config[i]);
-            if (GUILayout.Button((Texture)(Resources.Load("Images/ButtonDelete")), GUILayout.ExpandWidth(false)))
+            if (GUILayout.Button((Texture)(Resources.Load("Images/ButtonDelete")), GUILayout.ExpandWidth(false))) {
+                Undo.RecordObject(setup, "Delete type");
                 setup.config.RemoveAt(i);
+            }
             GUILayout.EndHorizontal();
         }
 
